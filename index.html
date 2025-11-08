@@ -1,159 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>LoveBook Dating Community</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <!-- Tailwind CDN for quick styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <title>LoveBook Dating Community</title>
+  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body class="bg-gray-900 text-gray-100">
+<body>
 
-<!-- HEADER -->
-<header class="fixed top-0 left-0 right-0 h-16 bg-gray-800 flex items-center justify-between px-6 shadow-lg z-50">
-    <div class="flex items-center gap-4">
-        <h1 class="text-2xl font-bold text-pink-500 cursor-pointer">LoveBook</h1>
-        <input type="text" id="searchUsers" placeholder="Search users, posts, topics..."
-               class="rounded px-3 py-1 text-black w-80">
-    </div>
-    <div class="flex items-center gap-6">
-        <button id="themeToggle" class="px-3 py-1 rounded bg-pink-500 text-white">Toggle Theme</button>
-        <div class="relative cursor-pointer" id="notificationsBtn">
-            <span class="material-icons">notifications</span>
-            <span id="notificationBadge" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1 hidden">0</span>
-        </div>
-        <div class="relative cursor-pointer" id="messagesBtn">
-            <span class="material-icons">chat</span>
-            <span id="messagesBadge" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1 hidden">0</span>
-        </div>
-        <img src="" alt="Avatar" id="userAvatar" class="w-10 h-10 rounded-full border-2 border-pink-500 cursor-pointer">
-    </div>
-</header>
+<!-- ===================== AUTH MODAL ===================== -->
+<div id="authModal" class="modal">
+  <div class="modal-content">
+    
+    <!-- LOGIN FORM -->
+    <form id="loginForm" class="auth-form">
+      <h2>Login</h2>
+      <input id="loginEmail" type="email" placeholder="Email" required>
+      <input id="loginPassword" type="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+      <div class="form-links">
+        <button type="button" id="showRegisterBtn">Register</button>
+        <button type="button" id="showResetBtn">Forgot Password?</button>
+      </div>
+    </form>
 
-<!-- LEFT SIDEBAR -->
-<aside class="fixed top-16 left-0 h-[calc(100%-4rem)] w-60 bg-gray-800 flex flex-col p-4 gap-4">
-    <button class="sidebar-btn" id="dashboardBtn">Dashboard</button>
-    <button class="sidebar-btn" id="groupsBtn">Groups</button>
-    <button class="sidebar-btn" id="analyticsBtn">Analytics</button>
-    <button class="sidebar-btn" id="birthdaysBtn">Today's Birthdays</button>
-    <button class="sidebar-btn" id="videoChatBtn">Video Chat</button>
-    <button class="sidebar-btn" id="settingsBtn">Settings</button>
-</aside>
+    <!-- REGISTER FORM -->
+    <form id="registerForm" class="auth-form hidden">
+      <h2>Register</h2>
+      <input id="registerEmail" type="email" placeholder="Email" required>
+      <input id="registerDisplayName" type="text" placeholder="Display Name" required>
+      <input id="registerPassword" type="password" placeholder="Password" required>
+      <input id="registerSecurityQ" type="text" placeholder="Security Question" required>
+      <input id="registerSecurityA" type="text" placeholder="Security Answer" required>
+      <button type="submit">Register</button>
+      <div class="form-links">
+        <button type="button" id="showLoginBtn">Back to Login</button>
+      </div>
+    </form>
 
-<!-- RIGHT SIDEBAR -->
-<aside class="fixed top-16 right-0 h-[calc(100%-4rem)] w-64 bg-gray-800 flex flex-col p-4 gap-4 overflow-y-auto">
-    <h2 class="text-lg font-bold mb-2">Suggested Connections</h2>
-    <div id="suggestedConnections" class="flex flex-col gap-2"></div>
+    <!-- RESET FORM -->
+    <form id="resetForm" class="auth-form hidden">
+      <h2>Reset Password</h2>
+      <input id="resetEmail" type="email" placeholder="Email" required>
+      <button type="submit">Send OTP</button>
+      <div class="form-links">
+        <button type="button" id="backToLoginBtn">Back to Login</button>
+      </div>
+    </form>
 
-    <h2 class="text-lg font-bold mt-4 mb-2">Trending Topics</h2>
-    <div id="trendingTopics" class="flex flex-col gap-2"></div>
-
-    <h2 class="text-lg font-bold mt-4 mb-2">Live Stats</h2>
-    <div id="liveStats" class="flex flex-col gap-1 text-sm"></div>
-
-    <h2 class="text-lg font-bold mt-4 mb-2">Ad Slot</h2>
-    <div id="adSlot" class="bg-gray-700 p-2 rounded">Partner Promotions Here</div>
-</aside>
-
-<!-- MAIN CONTENT -->
-<main class="ml-60 mr-64 mt-16 p-6 overflow-y-auto">
-    <!-- Feed / Posts -->
-    <section id="feedSection" class="flex flex-col gap-4">
-        <div id="createPost" class="bg-gray-800 p-4 rounded shadow flex flex-col gap-2">
-            <textarea id="postContent" placeholder="What's your love vibe?" class="w-full p-2 rounded text-black"></textarea>
-            <div class="flex justify-between items-center">
-                <input type="file" id="postMedia" multiple>
-                <button id="postSubmitBtn" class="px-4 py-1 rounded bg-pink-500 text-white">Post</button>
-            </div>
-        </div>
-
-        <div id="postsFeed" class="flex flex-col gap-4">
-            <!-- Posts will be appended here dynamically -->
-        </div>
-    </section>
-
-    <!-- Connections / Proposals -->
-    <section id="connectionsSection" class="mt-8">
-        <h2 class="text-xl font-bold mb-2">Connections</h2>
-        <div id="connectionsList" class="flex flex-col gap-2"></div>
-
-        <h2 class="text-xl font-bold mt-4 mb-2">Proposals</h2>
-        <div id="proposalsList" class="flex flex-col gap-2"></div>
-    </section>
-
-    <!-- Messaging Panel -->
-    <section id="messagesSection" class="mt-8">
-        <h2 class="text-xl font-bold mb-2">Messages</h2>
-        <div id="chatContainer" class="bg-gray-800 p-4 rounded flex flex-col gap-2 max-h-96 overflow-y-auto"></div>
-        <div class="flex gap-2 mt-2">
-            <input type="text" id="chatInput" placeholder="Type a message..." class="flex-1 p-2 rounded text-black">
-            <button id="chatSendBtn" class="px-4 py-1 rounded bg-pink-500 text-white">Send</button>
-        </div>
-    </section>
-
-    <!-- Groups / Communities -->
-    <section id="groupsSection" class="mt-8">
-        <h2 class="text-xl font-bold mb-2">Groups</h2>
-        <div id="groupsList" class="flex flex-col gap-2"></div>
-        <div class="mt-2 flex gap-2">
-            <input type="text" id="newGroupName" placeholder="New group name" class="p-2 rounded text-black flex-1">
-            <button id="createGroupBtn" class="px-4 py-1 rounded bg-pink-500 text-white">Create Group</button>
-        </div>
-    </section>
-</main>
-
-<!-- LOGIN / REGISTRATION MODALS -->
-<div id="authModal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 hidden">
-    <div class="bg-gray-800 p-6 rounded shadow w-96">
-        <h2 class="text-2xl font-bold mb-4 text-pink-500">Welcome to LoveBook</h2>
-        <div id="authForms" class="flex flex-col gap-4">
-            <!-- LOGIN FORM -->
-            <form id="loginForm" class="flex flex-col gap-2">
-                <input type="email" id="loginEmail" placeholder="Email" class="p-2 rounded text-black" required>
-                <input type="password" id="loginPassword" placeholder="Password" class="p-2 rounded text-black" required>
-                <button type="submit" class="px-4 py-1 rounded bg-pink-500 text-white">Login</button>
-                <button type="button" id="showRegisterBtn" class="text-sm text-blue-400 underline">Register</button>
-                <button type="button" id="showResetBtn" class="text-sm text-yellow-400 underline">Forgot Password?</button>
-            </form>
-
-            <!-- REGISTER FORM -->
-            <form id="registerForm" class="flex flex-col gap-2 hidden">
-                <input type="email" id="registerEmail" placeholder="Email" class="p-2 rounded text-black" required>
-                <input type="text" id="registerDisplayName" placeholder="Display Name" class="p-2 rounded text-black" required>
-                <input type="password" id="registerPassword" placeholder="Password" class="p-2 rounded text-black" required>
-                <select id="registerSecurityQ" class="p-2 rounded text-black">
-                    <option value="" disabled selected>Select Security Question</option>
-                    <option value="pet">Your first pet?</option>
-                    <option value="school">Your first school?</option>
-                    <option value="city">City you were born?</option>
-                </select>
-                <input type="text" id="registerSecurityA" placeholder="Answer" class="p-2 rounded text-black" required>
-                <button type="submit" class="px-4 py-1 rounded bg-pink-500 text-white">Register</button>
-                <button type="button" id="showLoginBtn" class="text-sm text-blue-400 underline">Back to Login</button>
-            </form>
-
-            <!-- PASSWORD RESET FORM -->
-            <form id="resetForm" class="flex flex-col gap-2 hidden">
-                <input type="email" id="resetEmail" placeholder="Email" class="p-2 rounded text-black" required>
-                <select id="resetSecurityQ" class="p-2 rounded text-black">
-                    <option value="" disabled selected>Select Security Question</option>
-                    <option value="pet">Your first pet?</option>
-                    <option value="school">Your first school?</option>
-                    <option value="city">City you were born?</option>
-                </select>
-                <input type="text" id="resetSecurityA" placeholder="Answer" class="p-2 rounded text-black" required>
-                <input type="text" id="resetOTP" placeholder="OTP sent to email" class="p-2 rounded text-black">
-                <input type="password" id="resetNewPassword" placeholder="New Password" class="p-2 rounded text-black">
-                <button type="submit" class="px-4 py-1 rounded bg-pink-500 text-white">Reset Password</button>
-                <button type="button" id="backToLoginBtn" class="text-sm text-blue-400 underline">Back to Login</button>
-            </form>
-        </div>
-    </div>
+  </div>
 </div>
 
-<script type="module" src="supabase-config.js"></script>
-<script type="module" src="app.js"></script>
+<!-- ===================== TOP HEADER ===================== -->
+<header class="top-header">
+  <div class="branding">💖 LoveBook</div>
+  <input id="searchInput" type="text" placeholder="Search users, posts...">
+  <div class="header-icons">
+    <div id="notificationBadge" class="badge">0</div>
+    <div id="messagesBadge" class="badge">0</div>
+    <img id="userAvatar" src="https://via.placeholder.com/40" alt="avatar">
+    <button id="themeToggle">🌙</button>
+  </div>
+</header>
+
+<!-- ===================== SIDEBARS & MAIN ===================== -->
+<div class="main-container">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="left-sidebar">
+    <nav>
+      <ul>
+        <li>Dashboard</li>
+        <li>Connections</li>
+        <li>Groups</li>
+        <li>Analytics</li>
+        <li>Birthdays</li>
+        <li>Settings</li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- FEED & POSTS -->
+    <section class="feed-section">
+      <div class="new-post">
+        <textarea id="postContent" placeholder="What's on your mind?"></textarea>
+        <input type="file" id="postMedia" multiple>
+        <select id="postVisibility">
+          <option value="public">Public</option>
+          <option value="connections">Connections</option>
+          <option value="private">Private</option>
+        </select>
+        <button id="postSubmitBtn">Post</button>
+      </div>
+      <div id="postsFeed" class="posts-feed"></div>
+    </section>
+
+    <!-- CONNECTIONS & PROPOSALS -->
+    <section class="connections-section">
+      <h3>Connections</h3>
+      <div id="connectionsList"></div>
+
+      <h3>Proposals</h3>
+      <div id="proposalsList"></div>
+    </section>
+
+    <!-- MESSAGING -->
+    <section class="messaging-section">
+      <h3>Chat</h3>
+      <div id="chatContainer" class="chat-container"></div>
+      <input id="chatInput" type="text" placeholder="Type a message">
+      <button id="chatSendBtn">Send</button>
+    </section>
+
+    <!-- GROUPS -->
+    <section class="groups-section">
+      <h3>Groups</h3>
+      <input id="newGroupName" placeholder="New Group Name">
+      <button id="createGroupBtn">Create Group</button>
+      <div id="groupsList" class="groups-list"></div>
+    </section>
+
+    <!-- ANALYTICS & DASHBOARD -->
+    <section class="analytics-section">
+      <h3>Profile Analytics</h3>
+      <div id="profileViews">Profile Views: 0</div>
+      <div id="postEngagement">Post Engagements: 0</div>
+      <div id="connectionCount">Connections: 0</div>
+      <div id="birthdaysToday">Today's Birthdays: None</div>
+    </section>
+
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="right-sidebar">
+    <h3>Trending Topics</h3>
+    <ul id="trendingTopics">
+      <li>Topic 1</li>
+      <li>Topic 2</li>
+      <li>Topic 3</li>
+    </ul>
+    <h3>Suggested Connections</h3>
+    <ul id="suggestedConnections">
+      <li>User 1</li>
+      <li>User 2</li>
+    </ul>
+    <div class="ad-slot">Ad Slot</div>
+  </aside>
+
+</div>
+
+<!-- ===================== SUPABASE CLIENT ===================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+<script src="supabase-config.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
